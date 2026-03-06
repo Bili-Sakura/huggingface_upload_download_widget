@@ -37,7 +37,7 @@ def download_model(
     """Download a model from Hugging Face (resumable, concurrent)."""
     base = models_dir or MODELS_DIR
     full_id = _full_repo_id(repo_id, default_org or HF_DEFAULT_ORG)
-    out_dir = local_dir or (base / Path(repo_id).name)
+    out_dir = local_dir or (base / full_id)
     out_dir.mkdir(parents=True, exist_ok=True)
     snapshot_download(
         repo_id=full_id,
@@ -70,7 +70,7 @@ def download_dataset(
     """Download a dataset from Hugging Face (resumable, concurrent)."""
     base = datasets_dir or DATASETS_DIR
     full_id = _full_repo_id(repo_id, default_org or HF_DEFAULT_ORG)
-    out_dir = local_dir or (base / Path(repo_id).name)
+    out_dir = local_dir or (base / full_id)
     out_dir.mkdir(parents=True, exist_ok=True)
     snapshot_download(
         repo_id=full_id,

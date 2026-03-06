@@ -193,15 +193,24 @@ with tab_models:
                 else:
                     with st.status("Uploading all…", expanded=True) as status:
                         try:
-                            if not MODELS_DIR.is_dir():
-                                st.error(f"Folder not found: {MODELS_DIR}")
+                            upload_base = (
+                                MODELS_DIR / HF_DEFAULT_ORG
+                                if HF_DEFAULT_ORG
+                                else MODELS_DIR
+                            )
+                            if not upload_base.is_dir():
+                                st.error(
+                                    f"Folder not found: {upload_base}"
+                                    + (f" (models under {HF_DEFAULT_ORG}/)" if HF_DEFAULT_ORG else "")
+                                )
                             else:
-                                dirs = [d.name for d in MODELS_DIR.iterdir() if d.is_dir()]
+                                dirs = [d.name for d in upload_base.iterdir() if d.is_dir()]
                                 with _tee_stdout_stderr() as buf:
                                     for name in dirs:
-                                        st.write(f"Uploading {name}…")
+                                        repo_id = f"{HF_DEFAULT_ORG}/{name}" if HF_DEFAULT_ORG else name
+                                        st.write(f"Uploading {repo_id}…")
                                         upload_model(
-                                            name,
+                                            repo_id,
                                             token,
                                             endpoint,
                                             num_workers=num_workers,
